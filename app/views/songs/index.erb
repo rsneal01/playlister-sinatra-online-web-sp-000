@@ -1,1 +1,6 @@
-Hello World
+<h1>
+<% @songs.each do |song| %>
+    <%= song.name %>
+    <a href='/songs/#{song.id}'>
+    <% end %>
+</h1>
