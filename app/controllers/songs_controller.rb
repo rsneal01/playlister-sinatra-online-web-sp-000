@@ -35,7 +35,7 @@ class SongsController < ApplicationController
             @song = Song.create(name: params[:song][:name])
             @artist.songs << @song
             params[:genre].each do |genre|
-                @genre= Genre.create(name: genre)
+                @genre= Genre.find_by(name: genre)
                 @song.genres << @genre
             end
         
@@ -44,7 +44,7 @@ class SongsController < ApplicationController
             @artist = Artist.all.find_by(name: params[:artist][:name])
             @artist.songs << @song
             params[:genre].each do |genre|
-                @genre= Genre.create(name: genre)
+                @genre= Genre.find_by(name: genre)
                 @song.genres << @genre
             end
         end
@@ -62,10 +62,13 @@ class SongsController < ApplicationController
 
     patch '/songs/:slug' do
         @song = Song.find_by_slug(params[:slug])
-        @song.artist.update(params[:artist])
-        binding.pry
-        # Want to be able to call @song.genres.update(params[:genre]), and update the song's genre using data from Edit form checkbox
-        # Why aren't we getting a genre key/value in our params?
+        # binding.pry
+        @song.update(params[:artist])
+        # @artist = Artist.find_or_create_by(name: params[:artist][:name])
+        @song.artist = Artist.find_or_create_by(name: params[:artist][:name])
+        @song.genre_ids = params[:genres]
+        @song.save
+        
         flash[:message] = "Successfully updated song."
         redirect to("/songs/#{@song.slug}")
     end
